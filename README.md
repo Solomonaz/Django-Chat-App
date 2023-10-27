@@ -37,6 +37,5 @@
 
 1. Log in using your newly created user at [http://localhost:8000/admin/](http://localhost:8000/admin/).
 
-1. Navigate to [http://localhost:8000/chat/](http://localhost:8000/chat/).
 "# Django-Chat-App" 
 "# Django-Chat-App" 
