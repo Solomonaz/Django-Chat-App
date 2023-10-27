@@ -1,0 +1,58 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Chat Room</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+        <style>
+            #chatLog {
+                height: 300px;
+                background-color: #FFFFFF;
+                resize: none;
+            }
+
+            #onlineUsersSelector {
+                height: 300px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container mt-3 p-5">
+            <nav class="navbar navbar-expand-sm navbar-light bg-light">
+                <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a  class="nav-link" href="{{ request.META.HTTP_REFERER }}">Back</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <div class="row">
+                <div class="col-12 col-md-8">
+                    <div class="mb-2">
+                        <label for="chatLog">Room: <b>{{ room.name }}</b> </label>
+                        <textarea class="form-control" id="chatLog" readonly></textarea>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="chatMessageInput" placeholder="Enter your chat message">
+                        <div class="input-group-append">
+                            <button class="btn btn-success mx-2" id="chatMessageSend" type="button">Send</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <label for="onlineUsers">Online users</label>
+                    <select multiple class="form-control" id="onlineUsersSelector">
+                    </select>
+                </div>
+            </div>
+            {{ room.name|json_script:"roomName" }}
+        </div>
+        <script src="{% static 'js/room.js' %}"></script>
+    </body>
+</html>

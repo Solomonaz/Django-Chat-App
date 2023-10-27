@@ -1,12 +1,3 @@
-# Django Channels Tutorial
-
-## Want to learn how to build this?
-
-Check out the [tutorial](https://testdriven.io/blog/django-channels/).
-
-## Want to use this project?
-
-1. Fork/Clone
 
 1. Create and activate a virtual environment:
 

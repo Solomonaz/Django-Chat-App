@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+ <!-- Page content -->
+ <div class="container mt-5 py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+    
+      <div class="card shadow border-0">
+        <div class="card-header bg-transparent">
+          <div class="text-muted text-center mt-2 mb-4">
+            Sign UP
+          </div>
+        </div>
+        <div class="card-body px-lg-5 py-lg-5">
+          {% if not success %}
+
+            <form method="POST">
+              {% csrf_token %}
+        
+              <div class="form-group">
+                <div class="input-group input-group-alternative mb-3">
+                  <div class="input-group-prepend">
+                  </div>
+                  <input type="text" class="form-control" name="first_name" placeholder="First Name">
+                </div>
+              </div>
+              <span class="text-error">{{ form.first_name.errors }}</span>
+              <div class="form-group">
+                <div class="input-group input-group-alternative mb-3">
+                  <div class="input-group-prepend">
+                  </div>
+                  <input type="text" class="form-control" name="last_name" placeholder="Last Name">
+                </div>
+              </div>
+              <span class="text-error">{{ form.last_name.errors }}</span>
+
+              <div class="form-group">
+                <div class="input-group input-group-alternative mb-3">
+                  <div class="input-group-prepend">
+                  </div>
+                  <input type="text" class="form-control" name="username" placeholder="username">
+                </div>
+              </div>
+              <span class="text-error">{{ form.username.errors }}</span>
+
+
+              <div class="form-group">
+                <div class="input-group input-group-alternative mb-3">
+                  <div class="input-group-prepend">
+                  </div>
+                  <input type="email" class="form-control" name="email" placeholder="email">
+                </div>
+              </div>
+              <span class="text-error">{{ form.email.errors }}</span>
+
+              <div class="form-group">
+                <div class="input-group input-group-alternative">
+                  <div class="input-group-prepend">
+                  </div>
+                  <input type="password" class="form-control" name="password1" placeholder="Password">
+                </div>
+              </div>
+              <span class="text-error">{{ form.password1.errors }}</span>
+
+              <div class="form-group my-3">
+                <div class="input-group input-group-alternative">
+                  <div class="input-group-prepend">
+                  </div>
+                  <input type="password" class="form-control" name="password2" placeholder="Confirm Password">
+                </div>
+              </div>
+              <span class="text-error">{{ form.password2.errors }}</span>
+
+              <div class="text-center py-3">
+                <button type="submit" class="btn btn-primary btn-sm my-2">Create Account</button>
+                <p class="text-muted">have an account? <a href="{% url 'login' %}">Login</a></p>
+            </div>
+            </form>
+
+          {% endif %}  
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</div>
+
+
+
+
+{% endblock %}
