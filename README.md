@@ -35,7 +35,8 @@
     (venv)$ python manage.py createsuperuser
     ```
 
-1. Log in using your newly created user at [http://localhost:8000/admin/](http://localhost:8000/admin/).
+1. Log in using your newly created user as admin role at [http://localhost:8000/admin/](http://localhost:8000/admin/).
 
+1. Navigate and login [http://localhost:8000](http://localhost:8000).
 "# Django-Chat-App" 
 "# Django-Chat-App" 
