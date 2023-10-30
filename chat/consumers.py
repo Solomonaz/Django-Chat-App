@@ -54,6 +54,14 @@ class ChatConsumer(WebsocketConsumer):
                 }
             )
             self.room.online.add(self.user)
+            # Send previous messages to the newly connected user
+        messages = Message.objects.filter(room=self.room)
+        for message in messages:
+            self.send(json.dumps({
+                'type': 'chat_message',
+                'user': message.user.username,
+                'message': message.content,
+            }))
 
     def disconnect(self, close_code):
         async_to_sync(self.channel_layer.group_discard)(
@@ -84,6 +92,7 @@ class ChatConsumer(WebsocketConsumer):
 
         if not self.user.is_authenticated:
             return
+        Message.objects.create(user = self.user, room = self.room, content = message)
         if message.startswith('/pm '):
             split = message.split(' ', 2)
             target = split[1]
