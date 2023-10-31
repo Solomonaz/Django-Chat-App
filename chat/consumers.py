@@ -6,6 +6,7 @@ from channels.generic.websocket import WebsocketConsumer
 from .models import Room, Message
 
 
+
 class ChatConsumer(WebsocketConsumer):
 
     def __init__(self, *args, **kwargs):
@@ -15,6 +16,8 @@ class ChatConsumer(WebsocketConsumer):
         self.room = None
         self.user = None
         self.user_inbox = None
+        self.history_sent = False
+        self.last_message_id = None
 
     def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
@@ -23,45 +26,51 @@ class ChatConsumer(WebsocketConsumer):
         self.user = self.scope['user']
         self.user_inbox = f'inbox_{self.user.username}'
 
-        # connection has to be accepted
         self.accept()
 
-        # join the room group
         async_to_sync(self.channel_layer.group_add)(
             self.room_group_name,
             self.channel_name,
         )
 
-        # send the user list to the newly joined user
         self.send(json.dumps({
             'type': 'user_list',
             'users': [user.username for user in self.room.online.all()],
         }))
 
-        if self.user.is_authenticated:
-            # create a user inbox for private messages
-            async_to_sync(self.channel_layer.group_add)(
-                self.user_inbox,
-                self.channel_name,
-            )
+        if not self.user.is_authenticated:
+            return
 
-            # send the join event to the room
-            async_to_sync(self.channel_layer.group_send)(
-                self.room_group_name,
-                {
-                    'type': 'user_join',
-                    'user': self.user.username,
-                }
-            )
-            self.room.online.add(self.user)
-            # Send previous messages to the newly connected user
+        if not self.scope.get('session').get('history_sent'):
+            self.scope['session']['history_sent'] = True
+            self.send_chat_history()
+
+        async_to_sync(self.channel_layer.group_add)(
+            self.user_inbox,
+            self.channel_name,
+        )
+
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_group_name,
+            {
+                'type': 'user_join',
+                'user': self.user.username,
+                
+            }
+        )
+        self.room.online.add(self.user)
+
+
+    def send_chat_history(self):
         messages = Message.objects.filter(room=self.room)
         for message in messages:
             self.send(json.dumps({
                 'type': 'chat_message',
                 'user': message.user.username,
                 'message': message.content,
+                'message_id': message.id,
             }))
+
 
     def disconnect(self, close_code):
         async_to_sync(self.channel_layer.group_discard)(
@@ -70,13 +79,11 @@ class ChatConsumer(WebsocketConsumer):
         )
 
         if self.user.is_authenticated:
-            # delete the user inbox for private messages
             async_to_sync(self.channel_layer.group_discard)(
                 self.user_inbox,
                 self.channel_name,
             )
 
-            # send the leave event to the room
             async_to_sync(self.channel_layer.group_send)(
                 self.room_group_name,
                 {
@@ -98,7 +105,6 @@ class ChatConsumer(WebsocketConsumer):
             target = split[1]
             target_msg = split[2]
 
-            # send private message to the target
             async_to_sync(self.channel_layer.group_send)(
                 f'inbox_{target}',
                 {
@@ -107,7 +113,6 @@ class ChatConsumer(WebsocketConsumer):
                     'message': target_msg,
                 }
             )
-            # send private message delivered to the user
             self.send(json.dumps({
                 'type': 'private_message_delivered',
                 'target': target,
@@ -115,7 +120,6 @@ class ChatConsumer(WebsocketConsumer):
             }))
             return
 
-        # send chat message event to the room
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name,
             {

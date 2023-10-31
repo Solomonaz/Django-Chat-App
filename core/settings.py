@@ -53,6 +53,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+SESSION_ENGINE = "django.contrib.sessions.backends.db"
+SESSION_COOKIE_NAME = "my_custom_session_cookie_name"
+
 ROOT_URLCONF = 'core.urls'
 
 TEMPLATES = [
@@ -98,6 +101,20 @@ DATABASES = {
         'PORT': '', 
     }
 }
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': os.environ.get('DJANGO_DB_NAME'),
+#         'USER': os.environ.get('DJANGO_DB_USER'),
+#         'PASSWORD': os.environ.get('DJANGO_DB_PASSWORD'),
+#         'HOST': os.environ.get('DJANGO_DB_HOST', 'localhost'),
+#         'PORT': os.environ.get('DJANGO_DB_PORT', '3306'),
+#     }
+# }
+
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
